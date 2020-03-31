@@ -8,11 +8,27 @@ tree_reorder <- function(ref_tree, reorder_tree){
   if(!setequal(t1$tip.label,t2$tip.label)){
     print("Trees dont conatain same tips")
     return(NA)
+  }else if(RF.dist(ref_tree, reorder_tree) != 0){
+    print("Topology does not match")
+    return(NA)
+  }else{
+    reorder_tree2 <- rotateConstr(reorder_tree, ref_tree$tip.label)
+    reorder_tree3 <- read.tree(text = write.tree(reorder_tree2))
+    reorder_tree3$name = reorder_tree$name
+    return(reorder_tree3)
   }
   
 }
 
 plot_BL <- function(treeX, treeY){
+  
+  treeY = tree_reorder(treeX, treeY)
+  
+  if(is.na(treeY)){
+    print("error in reordering quitting")
+    return(NULL)
+  }
+  
   bl_table <- tibble(treeX_bl = treeX$edge.length,
                      treeY_bl = treeY$edge.length)
   #return(bl_table)
