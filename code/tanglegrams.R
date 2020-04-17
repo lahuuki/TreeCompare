@@ -1,6 +1,7 @@
 library(ape)
 library(phytools)
 library(tidyverse)
+library(dendextend)
 
 
 #load trees into DendList, untangles them againist eachother 

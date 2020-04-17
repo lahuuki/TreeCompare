@@ -92,3 +92,36 @@ my_tanglegram_addBL <- function(tree1, tree2,outgroup, title){
                  highlight_branches_lwd = FALSE,
                  columns_width = c(10,3,10))
 }
+
+
+nodeToTip <- function(t){
+  h = phytools::nodeHeights(t) # give a matrix with all the heights of internal and terminal nodes in the same order as tree$edge.
+  edge.node1 = t$edge[,1]
+  edge.node2 = t$edge[,2]
+  
+  nodes = numeric()
+  node.to.tip.height = numeric()
+  
+  for (nd in unique(edge.node1)){
+    tips = phangorn::Descendants(t, nd, 'tips')[[1]]
+    h.nd.tol = sum(h[match(tips, edge.node2), 2]) - length(tips)* h[match(nd, edge.node1), 1]  ## total node-to-tip distances = sum of root-to-tip distances - root-to-node distance * number of repeated walks
+    h.nd = h.nd.tol/length(tips) ## total node-to-tip distances over the number of tips
+    
+    nodes = c(nodes, nd)
+    node.to.tip.height = c(node.to.tip.height, h.nd)
+    
+  }
+  
+  df = data.frame(nodes, node.to.tip.height)
+  df = df[order(df$nodes), ]
+  return(df)
+}
+
+compare_nodeToTip <- function(treeX, treeY){
+  treeY = tree_reorder(treeX, treeY)
+  
+  nodeToTip_x <- nodeToTip(treeX) %>% rename(node)
+  nodeToTip_y <- nodeToTip(treeY)
+  
+ 
+}
